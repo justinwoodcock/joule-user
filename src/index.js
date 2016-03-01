@@ -14,6 +14,8 @@ var Response = require('joule-node-response');
 var mongoose = require('mongoose');
 var mongoUri = process.env.MongoUri;
 
+var UserController = require('./controllers/user.js');
+
 mongoose.connect(mongoUri);
 var db = mongoose.connection;
 
@@ -33,10 +35,11 @@ exports.handler = function(event, context) {
 
   switch (event.httpMethod) {
     case 'GET':
-      var res = getMongoInfo();
-      return response.send(res);
+      UserController.findUser(event.query, response);
       break;
     case 'POST':
+      UserController.createUser(event.post, response);
+      break;
     case 'PUT':
     case 'DELETE':
     default:
@@ -48,14 +51,4 @@ exports.handler = function(event, context) {
       response.setHttpStatusCode(404);
       response.send(err);
   }
-};
-
-function getMongoInfo () {
-  return {
-    name: db.name,
-    user: db.user,
-    pass: db.pass,
-    host: db.host,
-    port: db.port
-  };
 };
