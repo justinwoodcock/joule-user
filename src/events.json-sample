@@ -3,14 +3,16 @@
     "MongoUri": "mongodb://<user>:<pass>@<mongoLocation>"
   },
   "events": {
-    "GET": {
-      "/": [
-        {}
-      ]
-    },
     "POST": {
       "/": [
-        {}
+        {"name": "Justin Woodcock", "username": "justin", "password": "password", "email": "justin@emailaddress.com", "admin": true, "dob": "10/6/1980"},
+        {"name": "Melissa Woodcock", "username": "melissa", "password": "password", "email": "melissa@emailaddress.com", "admin": false, "dob": "4/5/1983"}
+      ]
+    },
+    "GET": {
+      "/": [
+        {},
+        {"username": "justin"}
       ]
     }
   }
