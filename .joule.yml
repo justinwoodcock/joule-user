@@ -2,6 +2,7 @@ version: 0.0.1
 language: 'nodejs'
 environment_variables:
   - MongoUri # accessible as process.env.MyVariable - value input through the site
+  - JwtSecret
 methods:
   GET:
     status_codes:
@@ -24,7 +25,7 @@ methods:
       - 409
       - 500
     path_params:
-      # - myPathParam : optional # [required or optional], see below for details, accessible as process.env.myPathParam
+      - auth : optional # [required or optional], see below for details, accessible as process.env.myPathParam
     query_string_params:
       # - myQueryStringParam # accessible as process.env.myQueryStringParam
   PUT:

@@ -1,6 +1,6 @@
 /**
- * This is a boilerplate repository for creating MongoDB joules.
- * Forking this repository will give you a simple MongoDB connection using Mongoose.
+ * This is a boilerplate repository for managing Users w/ JWT.
+ * Forking this repository will give you a User model with auth and JSON Web Tokens.
  */
 
 /*
@@ -38,7 +38,11 @@ exports.handler = function(event, context) {
       UserController.findUser(event.query, response);
       break;
     case 'POST':
-      UserController.createUser(event.post, response);
+      if (event.query.auth) {
+        UserController.authUser(event.post, response);
+      } else {
+        UserController.createUser(event.post, response);
+      }
       break;
     case 'PUT':
     case 'DELETE':
