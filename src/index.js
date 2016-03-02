@@ -41,7 +41,7 @@ exports.handler = function(event, context) {
       UserController.findUser(event.query, response);
       break;
     case 'POST':
-      if (event.query.auth) {
+      if (event.path[0] && event.path[0] === 'auth') {
         UserController.authUser(event.post, response);
       } else {
         UserController.createUser(event.post, response);
