@@ -32,6 +32,9 @@ db.on('error', console.error.bind(console, 'connection error:'));
 exports.handler = function(event, context) {
   var response = new Response();
   response.setContext(context);
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+  response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
 
   switch (event.httpMethod) {
     case 'GET':
