@@ -31,11 +31,6 @@ UserController.prototype.findUser = function (queryParams, response) {
 
 UserController.prototype.createUser = function (postData, response) {
   var self = this;
-  User.find({}, function (err, users) {
-    if (users.length === 0) {
-      self.seedUser();
-    }
-  });
   self.verifyJwt(postData.token,
     function () {
       var user = new User({
@@ -80,6 +75,12 @@ UserController.prototype.seedUser = function () {
 };
 
 UserController.prototype.authUser = function (postData, response) {
+  var self = this;
+  User.find({}, function (err, users) {
+    if (users.length === 0) {
+      self.seedUser();
+    }
+  });
   User.findOne(postData, function (err, user) {
     if (user) {
       var res = {
