@@ -31,31 +31,23 @@ UserController.prototype.findUser = function (queryParams, response) {
 
 UserController.prototype.createUser = function (postData, response) {
   var self = this;
-  self.verifyJwt(postData.token,
-    function () {
-      if (self.isUserAdmin(postData.userId) === true) {
-        var user = new User({
-          name: postData.name,
-          username: postData.username,
-          password: postData.password,
-          email: postData.email,
-          dob: postData.dob,
-          admin: postData.admin
-        });
-        user.save(function (err, res) {
-          if (err) {
-            response.setHttpStatusCode(404);
-            return response.send(err); 
-          }
-          return response.send(res);
-        });
-      } else {
-        var err = {
-          error: 'User is either not an admin, or there was no userId in your POST.'
-        };
-        response.setHttpStatusCode(404);
-        return response.send(err);
-      }
+  self.isUserAdmin(postData.userId, function (isAdmin) {
+    self.verifyJwt(postData.token, function () {
+      var user = new User({
+        name: postData.name,
+        username: postData.username,
+        password: postData.password,
+        email: postData.email,
+        dob: postData.dob,
+        admin: postData.admin
+      });
+      user.save(function (err, res) {
+        if (err) {
+          response.setHttpStatusCode(404);
+          return response.send(err); 
+        }
+        return response.send(res);
+      });
     },
     function (err) {
       var err = {
@@ -64,6 +56,13 @@ UserController.prototype.createUser = function (postData, response) {
       response.setHttpStatusCode(403);
       return response.send(err);
     });
+  }, function (err) {
+    var err = {
+      error: 'User is either not an admin, or there was no userId in your POST.'
+    };
+    response.setHttpStatusCode(404);
+    return response.send(err);
+  });
 };
 
 UserController.prototype.seedUser = function () {

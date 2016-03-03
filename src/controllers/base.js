@@ -14,10 +14,15 @@ BaseController.prototype.verifyJwt = function (token, successCallback, errorCall
   });
 };
 
-BaseController.prototype.isUserAdmin = function (userId) {
+BaseController.prototype.isUserAdmin = function (userId, successCallback, errorCallback) {
+
   User.findById(userId, function (err, user) {
-    var isAdmin = user && user.admin ? user.admin : false;
-    return isAdmin;
+    if (err) {
+      errorCallback(err);
+    } else {
+      var isAdmin = user && user.admin ? user.admin : false;
+      successCallback(isAdmin);
+    }
   });
 };
 
