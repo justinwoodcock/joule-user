@@ -84,25 +84,25 @@ UserController.prototype.seedUser = function () {
 
 UserController.prototype.authUser = function (postData, response) {
   var self = this;
-  User.find({}, function (err, users) {
-    if (users.length === 0) {
+  User.count({}, function (err, count) {
+    if (count === 0) {
       self.seedUser();
     }
   });
   User.findOne(postData, function (err, user) {
-    if (user) {
-      user.token = jwt.sign(user, jwtSecret, {
-        expiresIn: "24h"
-      });
-      return response.send(user);
+    if (err) {
+      response.setHttpStatusCode(404);
+      return response.send(err);
     }
-    if (!err && !user) {
-      var err = {
-        error: 'Your auth credentials are bad.'
+    jwt.sign(user, jwtSecret, {
+      expiresIn: "24h"
+    }, function (token) {
+      var res = {
+        token: token,
+        user: user
       };
-    }
-    response.setHttpStatusCode(404);
-    return response.send(err); 
+      return response.send(res);
+    });
   });
 };
 
