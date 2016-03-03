@@ -90,16 +90,18 @@ UserController.prototype.authUser = function (postData, response) {
     }
   });
   User.findOne(postData, function (err, user) {
+    var userToken = undefined;
     if (user) {
       jwt.sign(user, jwtSecret, {
         expiresIn: "24h"
       }, function (token) {
-        var res = {
-          token: token,
-          user: user
-        };
-        return response.send(res);
+        userToken = token;
       });
+      var res = {
+        token: userToken,
+        user: user
+      };
+      return response.send(res);
     }
     if (!err && !user) {
       var err = {
