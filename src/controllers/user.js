@@ -33,21 +33,29 @@ UserController.prototype.createUser = function (postData, response) {
   var self = this;
   self.verifyJwt(postData.token,
     function () {
-      var user = new User({
-        name: postData.name,
-        username: postData.username,
-        password: postData.password,
-        email: postData.email,
-        dob: postData.dob,
-        admin: postData.admin
-      });
-      user.save(function (err, res) {
-        if (err) {
-          response.setHttpStatusCode(404);
-          return response.send(err); 
-        }
-        return response.send(res);
-      });
+      if (self.isUserAdmin(postData.userId) === true) {
+        var user = new User({
+          name: postData.name,
+          username: postData.username,
+          password: postData.password,
+          email: postData.email,
+          dob: postData.dob,
+          admin: postData.admin
+        });
+        user.save(function (err, res) {
+          if (err) {
+            response.setHttpStatusCode(404);
+            return response.send(err); 
+          }
+          return response.send(res);
+        });
+      } else {
+        var err = {
+          error: 'User is either not an admin, or there was no userId in your POST.'
+        };
+        response.setHttpStatusCode(404);
+        return response.send(err);
+      }
     },
     function (err) {
       var err = {
@@ -83,12 +91,10 @@ UserController.prototype.authUser = function (postData, response) {
   });
   User.findOne(postData, function (err, user) {
     if (user) {
-      var res = {
-        token: jwt.sign(user, jwtSecret, {
-          expiresIn: "24h"
-        })
-      };
-      return response.send(res);
+      user.token = jwt.sign(user, jwtSecret, {
+        expiresIn: "24h"
+      });
+      return response.send(user);
     }
     if (!err && !user) {
       var err = {
