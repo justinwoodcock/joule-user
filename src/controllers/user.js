@@ -84,24 +84,22 @@ UserController.prototype.seedUser = function () {
 
 UserController.prototype.authUser = function (postData, response) {
   var self = this;
-  User.find({}, function (err, users) {
-    if (users.length === 0) {
+  User.count({}, function (err, count) {
+    if (count === 0) {
       self.seedUser();
     }
   });
   User.findOne(postData, function (err, user) {
-    var userToken = undefined;
     if (user) {
       jwt.sign(user, jwtSecret, {
         expiresIn: "24h"
       }, function (token) {
-        userToken = token;
+        var res = {
+          token: token,
+          user: user
+        };
+        return response.send(res);
       });
-      var res = {
-        token: userToken,
-        user: user
-      };
-      return response.send(res);
     }
     if (!err && !user) {
       var err = {
