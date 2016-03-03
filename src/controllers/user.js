@@ -90,7 +90,7 @@ UserController.prototype.authUser = function (postData, response) {
     }
   });
   User.findOne(postData, function (err, user) {
-    if (user) {
+    // if (user) {
       jwt.sign(user, jwtSecret, {
         expiresIn: "24h"
       }, function (token) {
@@ -100,7 +100,7 @@ UserController.prototype.authUser = function (postData, response) {
         };
         return response.send(res);
       });
-    }
+    // }
     if (!err && !user) {
       var err = {
         error: 'Your auth credentials are bad.'
