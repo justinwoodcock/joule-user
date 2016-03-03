@@ -90,24 +90,29 @@ UserController.prototype.authUser = function (postData, response) {
     }
   });
   User.findOne(postData, function (err, user) {
+    if (err) {
+      response.setHttpStatusCode(404);
+      return response.send(err);
+    }
+    console.log('user: ', user, '---------------------end');
     // if (user) {
       jwt.sign(user, jwtSecret, {
         expiresIn: "24h"
       }, function (token) {
+        console.log('sign token');
         var res = {
           token: token,
           user: user
         };
+        console.log('res', res);
         return response.send(res);
       });
     // }
-    if (!err && !user) {
-      var err = {
-        error: 'Your auth credentials are bad.'
-      };
-    }
-    response.setHttpStatusCode(404);
-    return response.send(err); 
+    // if (!err && !user) {
+    //   var err = {
+    //     error: 'Your auth credentials are bad.'
+    //   };
+    // }
   });
 };
 
