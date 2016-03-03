@@ -91,10 +91,15 @@ UserController.prototype.authUser = function (postData, response) {
   });
   User.findOne(postData, function (err, user) {
     if (user) {
-      user.token = jwt.sign(user, jwtSecret, {
+      jwt.sign(user, jwtSecret, {
         expiresIn: "24h"
+      }, function (token) {
+        var res = {
+          token: token,
+          user: user
+        };
+        return response.send(res);
       });
-      return response.send(user);
     }
     if (!err && !user) {
       var err = {
